@@ -1,0 +1,103 @@
+package main
+
+import (
+	"fmt"
+	"simple-res-api/controllers"
+	"simple-res-api/models"
+
+	"github.com/labstack/echo/v4"
+	"github.com/spf13/viper"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+)
+
+func main() {
+	config := readConfig()
+
+	db := initDB(config)
+	migrateDB(db)
+
+	e := echo.New()
+
+	controller := &controllers.Controller{DB: db}
+
+	// Company routes
+	e.GET("/api/companies", controller.GetCompanies)
+	e.GET("/api/companies/:company_id", controller.GetCompanyById)
+	e.POST("/api/companies", controller.CreateCompany)
+	e.PUT("/api/companies/:company_id", controller.UpdateCompany)
+	e.DELETE("/api/companies/:company_id", controller.DeleteCompany)
+
+	// Job listings
+	e.GET("/api/jobs", controller.GetJobListings)
+	e.GET("/api/jobs/:job_id", controller.GetJobListingById)
+	e.POST("/api/jobs", controller.CreateJobListing)
+	e.PUT("/api/jobs/:job_id", controller.UpdateJobListing)
+	e.DELETE("/api/jobs/:job_id", controller.DeleteJobListing)
+
+	// Candidate profiles //DONE
+	e.GET("/api/candidates", controller.GetCandidates)
+	e.GET("/api/candidates/:candidate_id", controller.GetCandidateById)
+	e.POST("/api/candidates", controller.CreateCandidate)
+	e.PUT("/api/candidates/:candidate_id", controller.UpdateCandidate)
+	e.DELETE("/api/candidates/:candidate_id", controller.DeleteCandidate)
+
+	// Applications
+	e.POST("/api/jobs/:job_id/apply", controller.ApplyForJob)
+	e.GET("/api/jobs/:job_id/applications", controller.ListApplications)
+	e.GET("/api/applications/:application_id", controller.GetApplication)
+	e.PUT("/api/applications/:application_id", controller.UpdateApplication)
+	e.DELETE("/api/applications/:application_id", controller.WithdrawApplication)
+
+	// Reviews
+	e.GET("/api/jobs/:job_id/reviews", controller.ListJobReviews)
+	e.POST("/api/jobs/:job_id/reviews", controller.CreateJobReview)
+	e.GET("/api/candidates/:candidate_id/reviews", controller.ListCandidateReviews)
+	e.POST("/api/candidates/:candidate_id/reviews", controller.CreateCandidateReview)
+
+	e.Start(":8080")
+}
+
+func readConfig() Config {
+	viper.SetConfigName("config")
+	viper.SetConfigType("yaml")
+	viper.AddConfigPath(".")
+
+	var config Config
+	err := viper.ReadInConfig()
+	if err != nil {
+		panic(fmt.Errorf("Fatal error config file: %s \n", err))
+	}
+	err = viper.Unmarshal(&config)
+	if err != nil {
+		panic(fmt.Errorf("Error unmarshaling config: %s \n", err))
+	}
+	return config
+}
+
+func initDB(config Config) *gorm.DB {
+	dsn := fmt.Sprintf(
+		"host=%s user=%s password=%s dbname=%s port=%d sslmode=disable TimeZone=Asia/Shanghai",
+		config.Database.Host, config.Database.Username, config.Database.Password,
+		config.Database.DBName, config.Database.Port,
+	)
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		panic("Failed to connect to database")
+	}
+	return db
+}
+
+func migrateDB(db *gorm.DB) {
+	db.AutoMigrate(&models.Company{}, &models.JobListing{}, &models.Candidate{})
+}
+
+type Config struct {
+	Database struct {
+		Host     string `mapstructure:"host"`
+		Port     int    `mapstructure:"port"`
+		Username string `mapstructure:"username"`
+		Password string `mapstructure:"password"`
+		DBName   string `mapstructure:"dbname"`
+	} `mapstructure:"database"`
+}
