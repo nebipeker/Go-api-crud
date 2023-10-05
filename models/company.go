@@ -6,5 +6,6 @@ type Company struct {
 	gorm.Model
 	Name        string
 	Description string
-	JobListings []JobListing // One-to-Many relationship
+	JobListings []JobListing // One-to-Many relationship might be forced later.
+	Reviews     []Review     // one to many
 }

@@ -8,4 +8,5 @@ type Candidate struct {
 	Surname     string
 	Email       string       `gorm:"unique;not null;type:varchar(100);default:null"`
 	JobListings []JobListing `gorm:"many2many"`
+	Reviews     []Review     // one to many
 }
