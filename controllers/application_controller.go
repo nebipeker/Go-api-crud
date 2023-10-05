@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"simple-res-api/models"
 
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
@@ -12,14 +13,26 @@ type Application struct {
 }
 
 func (c *Controller) ApplyForJob(ctx echo.Context) error {
-	var requestData map[string]interface{}
-	//job_id := ctx.Param("job_id")
+	candidateID := ctx.Param("candidateID")
+	jobListingID := ctx.Param("jobListingID")
 
-	if err := ctx.Bind(&requestData); err != nil {
-		return ctx.JSON(http.StatusBadRequest, "Invalid request body")
+	// Check if the candidate exists
+	var candidate models.Candidate
+	if err := c.DB.First(&candidate, candidateID).Error; err != nil {
+		return ctx.JSON(http.StatusNotFound, map[string]string{"error": "Candidate not found"})
 	}
 
-	return ctx.JSON(http.StatusOK, "")
+	// Check if the job listing exists
+	var jobListing models.JobListing
+	if err := c.DB.First(&jobListing, jobListingID).Error; err != nil {
+		return ctx.JSON(http.StatusNotFound, map[string]string{"error": "Job listing not found"})
+	}
+
+	// Append the job listing to the candidate's list of applied jobs
+	c.DB.Model(&candidate).Association("JobListings").Append(&jobListing)
+
+	return ctx.JSON(http.StatusCreated, map[string]string{"message": "Application submitted"})
+
 }
 func (c *Controller) ListApplications(ctx echo.Context) error {
 

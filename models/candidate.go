@@ -7,5 +7,5 @@ type Candidate struct {
 	Name        string
 	Surname     string
 	Email       string       `gorm:"unique;not null;type:varchar(100);default:null"`
-	JobListings []JobListing `gorm:"many2many:job_listing_candidates;"`
+	JobListings []JobListing `gorm:"many2many"`
 }

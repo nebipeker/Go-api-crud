@@ -7,5 +7,6 @@ type Review struct {
 	CandidateId  uint
 	JobListingId uint
 	CompanyId    uint
+	IsCompany    bool
 	Message      string
 }
