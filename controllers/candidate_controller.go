@@ -16,7 +16,7 @@ func (c *Controller) GetCandidates(ctx echo.Context) error {
 func (c *Controller) GetCandidateById(ctx echo.Context) error {
 	var candidate models.Candidate
 	candidate_id := ctx.Param("candidate_id")
-	result := c.DB.Find(&candidate, candidate_id)
+	result := c.DB.First(&candidate, candidate_id)
 	if result.Error != nil {
 		return ctx.JSON(http.StatusNotFound, "Candidate not found")
 	}

@@ -42,13 +42,6 @@ func main() {
 	e.PUT("/api/candidates/:candidate_id", controller.UpdateCandidate)
 	e.DELETE("/api/candidates/:candidate_id", controller.DeleteCandidate)
 
-	// Applications
-	e.POST("/api/jobs/:job_id/apply", controller.ApplyForJob)
-	e.GET("/api/jobs/:job_id/applications", controller.ListApplications)
-	e.GET("/api/applications/:application_id", controller.GetApplication)
-	e.PUT("/api/applications/:application_id", controller.UpdateApplication)
-	e.DELETE("/api/applications/:application_id", controller.WithdrawApplication)
-
 	// Reviews
 	e.GET("/api/jobs/:job_id/reviews", controller.ListJobReviews)
 	e.POST("/api/jobs/:job_id/reviews", controller.CreateJobReview)
