@@ -16,7 +16,7 @@ This repository contains a simple Go (Golang) API built using the Echo framework
 
 ## Getting Started
 
-To run this API and test its functionality, follow these steps:
+To run this API and test its functionality using Docker and Docker Compose, follow these steps:
 
 1. **Clone the Repository**:
    ```
@@ -24,24 +24,23 @@ To run this API and test its functionality, follow these steps:
    cd Go-api-crud
    ```
 
-2. **Set Up PostgreSQL**:
-   - Make sure you have PostgreSQL installed and running.
-   - Configure the database connection details in a `config.yaml` file.
-
-3. **Install Dependencies**:
+2. **Create a `.env` file**:
+   - Create a `.env` file in the project directory to configure environment variables used by Docker Compose. You can use the following example as a starting point:
    ```
-   go mod tidy
-   ```
-
-4. **Run the API**:
-   ```
-   go run main.go
+   POSTGRES_USER=your_db_user
+   POSTGRES_PASSWORD=your_db_password
+   POSTGRES_DB=jobkeep
    ```
 
-5. **Import the Postman Collection**:
+3. **Build and Start the Docker Containers**:
+   ```
+   docker-compose up --build
+   ```
+
+4. **Import the Postman Collection**:
    - Import the provided Postman collection to test the API endpoints located in the `postman` directory.
 
-6. **Start Testing**:
+5. **Start Testing**:
    - Use Postman to send requests to the API endpoints for candidate, company, and job listing management.
 
 ## API Routes
@@ -63,14 +62,14 @@ The Postman collection, located in the `postman` directory, contains pre-defined
 
 ## Configuration
 
-The API configuration is stored in a `config.yaml` file, including database connection details. Ensure you update this file with your specific configuration.
+The API configuration is managed through environment variables set in the `.env` file. Ensure you update this file with your specific configuration.
 
 ## Dependencies
 
 - Echo: A fast and minimalist Go web framework.
 - GORM: An Object Relational Mapping (ORM) library for Go.
 - Postman: A popular tool for testing APIs.
-- Postgres: An open-source relitional database.
+- Postgres: An open-source relational database.
 
 ## TODO List
 
@@ -85,5 +84,3 @@ This project is licensed under the [MIT License](LICENSE).
 ---
 
 Feel free to contribute to this project or use it as a reference for your own Go API development. If you encounter any issues or have suggestions for improvement, please open an issue or submit a pull request.
-
-
