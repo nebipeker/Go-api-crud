@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"simple-res-api/controllers"
 	"simple-res-api/models"
 
@@ -46,7 +47,7 @@ func main() {
 }
 
 func readConfig() Config {
-	viper.SetConfigName("config")
+	viper.SetConfigName("docker-compose")
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath(".")
 
@@ -64,13 +65,13 @@ func readConfig() Config {
 
 func initDB(config Config) *gorm.DB {
 	dsn := fmt.Sprintf(
-		"host=%s user=%s password=%s dbname=%s port=%d sslmode=disable TimeZone=Asia/Shanghai",
-		config.Database.Host, config.Database.Username, config.Database.Password,
+		"host=db user=%s password=%s dbname=%s port=%d sslmode=disable TimeZone=Asia/Shanghai",
+		config.Database.Username, config.Database.Password,
 		config.Database.DBName, config.Database.Port,
 	)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		panic("Failed to connect to database")
+		log.Fatalf("Failed to connect to database: %s", err)
 	}
 	return db
 }
