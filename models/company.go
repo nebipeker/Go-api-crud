@@ -7,5 +7,4 @@ type Company struct {
 	Name        string
 	Description string
 	JobListings []JobListing // One-to-Many relationship might be forced later.
-	Reviews     []Review     // one to many
 }
